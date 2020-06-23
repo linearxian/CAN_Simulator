@@ -8,7 +8,6 @@ INT32U canId = 0x000;
 
 unsigned char len = 0;
 unsigned char buf[8];
-char str[20];
 
 String BuildMessage="";
 int MSGIdentifier=0;
@@ -34,21 +33,31 @@ START_INIT:
 
 void loop()
 {
-    char rndCoolantTemp=random(1,200);
-    char rndRPM=random(1,55);
-    char rndSpeed=random(0,255);
-    char rndIAT=random(0,255);
-    char rndMAF=random(0,255);
-    char rndAmbientAirTemp=random(0,200);
-    char rndCAT1Temp=random(1,55);
+	  //Virtuel Sensors, just random values
+    int intCoolantTemp=random(1,200);
+    int intRPM=random(0,163); //factor 100, directly used by CAN, needs to be recalculated for OBD II
+    int intSpeed=random(0,255);
+    int intIAT=random(0,255);
+    int intMAF=random(0,255);
+    int intAmbientAirTemp=random(0,200);
+    int intCAT1Temp=random(1,55);
     
-    //GENERAL ROUTINE
+    //SENSORS OBD II
+	  char rndCoolantTemp=intCoolantTemp;
+    char rndRPM=intRPM;
+    char rndSpeed=intSpeed;
+    char rndIAT=intIAT;
+    char rndMAF=intMAF;
+    char rndAmbientAirTemp=intAmbientAirTemp;
+    char rndCAT1Temp=intCAT1Temp;
+	  char obdRPM=(intRPM*400-224)/256; //recalculated RPM for OBD II
+	
+	  //GENERAL ROUTINE for OBD II
     unsigned char SupportedPID[8] =       {1,2,3,4,5,6,7,8};
     unsigned char MilCleared[8] =         {4, 65, 63, 34, 224, 185, 147, 170}; 
-    
-    //SENSORS
+	
     unsigned char CoolantTemp[8] =        {4, 65, 5, rndCoolantTemp, 0, 185, 147, 170};  
-    unsigned char rpm[8] =                {4, 65, 12, rndRPM, 224, 170, 170, 170}; //{0x04, 0x41, 0x0C, rndRPM (factorA), 224 (factorB), 185 (fuellbyte), 147 (fuellbyte)};
+    unsigned char rpm[8] =                {4, 65, 12, obdRPM, 224, 170, 170, 170}; //{0x04, 0x41, 0x0C, rndRPM (factorA), 224 (factorB), 185 (fuellbyte), 147 (fuellbyte)};
     unsigned char vspeed[8] =             {4, 65, 13, rndSpeed, 224, 170, 170, 170}; //{0x04, 0x41, 0x0D, rndSpeed (factorA), 224 (fuellbyte), 185 (fuellbyte), 147 (fuellbyte)};
     unsigned char IATSensor[8] =          {4, 65, 15, rndIAT, 0, 185, 147, 170};
     unsigned char MAFSensor[8] =          {4, 65, 16, rndMAF, 0, 185, 147, 170};
@@ -57,10 +66,22 @@ void loop()
     unsigned char CAT2Temp[8] =           {4, 65, 61, rndCAT1Temp, 224, 185, 147, 170};
     unsigned char CAT3Temp[8] =           {4, 65, 62, rndCAT1Temp, 224, 185, 147, 170};
     unsigned char CAT4Temp[8] =           {4, 65, 63, rndCAT1Temp, 224, 185, 147, 170};
+	
+	  //SENSORS CAN
+    char canTorque=random(0,255);
+    char canVoltage=random(0,255);
+    char canPressure=random(0,255);
+   
+	  unsigned char testbench_000[8] =      {canVoltage, canTorque, rndSpeed, rndRPM, 0, 0, 0, 21};
+	  unsigned char ambient_500[8] =        {canPressure, rndAmbientAirTemp, 0, 0, 0, 0, 0, 21};
+
+    //CAN
+    CAN.sendMsgBuf(0, 0, 8, testbench_000);
+    CAN.sendMsgBuf(500, 0, 8, ambient_500);
     
+	  //OBD II
     if(CAN_MSGAVAIL == CAN.checkReceive())  
     {
-      
       CAN.readMsgBuf(&len, buf); 
         canId = CAN.getCanId();
         Serial.print("<");Serial.print(canId);Serial.print(",");
