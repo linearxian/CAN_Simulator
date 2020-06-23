@@ -1,0 +1,39 @@
+VERSION "HIPBNYYYYYYYYYYYYYYYYYYYYYYYYYYYNNNNNNNNNN/4/%%%/4/'%**4NNN///"
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+
+BS_:
+
+BU_: Vector__XXX
+
+
+BO_ 500 ambient: 8 Vector__XXX
+ SG_ temperatur : 8|8@1+ (0.078,10.094) [10|30] "°C" Vector__XXX
+ SG_ pressure : 0|8@1+ (0.39,963.72) [963|1064] "hPa" Vector__XXX
+
+BO_ 0 testbench: 8 Vector__XXX
+ SG_ rpm : 24|8@1+ (100,0) [0|25600] "rpm" Vector__XXX
+ SG_ VehicleSpeed : 16|8@1+ (1,0) [0|256] "km/h" Vector__XXX
+ SG_ torque : 8|8@1+ (1,-127) [-127|127] "Nm" Vector__XXX
+ SG_ voltage : 0|8@1+ (1,0) [0|256] "V" Vector__XXX
