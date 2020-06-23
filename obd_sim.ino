@@ -33,7 +33,7 @@ START_INIT:
 
 void loop()
 {
-	  //Virtuel Sensors, just random values
+    //Virtuel Sensors, just random values
     int intCoolantTemp=random(1,200);
     int intRPM=random(0,163); //factor 100, directly used by CAN, needs to be recalculated for OBD II
     int intSpeed=random(0,255);
@@ -43,16 +43,16 @@ void loop()
     int intCAT1Temp=random(1,55);
     
     //SENSORS OBD II
-	  char rndCoolantTemp=intCoolantTemp;
+    char rndCoolantTemp=intCoolantTemp;
     char rndRPM=intRPM;
     char rndSpeed=intSpeed;
     char rndIAT=intIAT;
     char rndMAF=intMAF;
     char rndAmbientAirTemp=intAmbientAirTemp;
     char rndCAT1Temp=intCAT1Temp;
-	  char obdRPM=(intRPM*400-224)/256; //recalculated RPM for OBD II
+    char obdRPM=(intRPM*400-224)/256; //recalculated RPM for OBD II
 	
-	  //GENERAL ROUTINE for OBD II
+    //GENERAL ROUTINE for OBD II
     unsigned char SupportedPID[8] =       {1,2,3,4,5,6,7,8};
     unsigned char MilCleared[8] =         {4, 65, 63, 34, 224, 185, 147, 170}; 
 	
@@ -67,19 +67,19 @@ void loop()
     unsigned char CAT3Temp[8] =           {4, 65, 62, rndCAT1Temp, 224, 185, 147, 170};
     unsigned char CAT4Temp[8] =           {4, 65, 63, rndCAT1Temp, 224, 185, 147, 170};
 	
-	  //SENSORS CAN
+    //SENSORS CAN
     char canTorque=random(0,255);
     char canVoltage=random(0,255);
     char canPressure=random(0,255);
    
-	  unsigned char testbench_000[8] =      {canVoltage, canTorque, rndSpeed, rndRPM, 0, 0, 0, 21};
-	  unsigned char ambient_500[8] =        {canPressure, rndAmbientAirTemp, 0, 0, 0, 0, 0, 21};
+    unsigned char testbench_000[8] =      {canVoltage, canTorque, rndSpeed, rndRPM, 0, 0, 0, 21};
+    unsigned char ambient_500[8] =        {canPressure, rndAmbientAirTemp, 0, 0, 0, 0, 0, 21};
 
     //CAN
     CAN.sendMsgBuf(0, 0, 8, testbench_000);
     CAN.sendMsgBuf(500, 0, 8, ambient_500);
     
-	  //OBD II
+    //OBD II
     if(CAN_MSGAVAIL == CAN.checkReceive())  
     {
       CAN.readMsgBuf(&len, buf); 
